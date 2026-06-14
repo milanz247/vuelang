@@ -1,6 +1,10 @@
-# Vuelang Framework
+<div align="center">
+  <img src="ui/public/vuelang-logo.svg" alt="Vuelang Logo" width="120" height="120" />
+  <h1>Vuelang Framework</h1>
+  <p><strong>Author</strong>: Milan Madusanka, Associate TechOps Engineer</p>
+</div>
 
-**Author**: Milan Madusanka, Associate TechOps Engineer
+<br />
 
 Vuelang is an enterprise-grade, full-stack MVC web framework. It bridges the performance of a Go backend with the reactivity of a Vue 3 frontend. Inspired by proven MVC architectural patterns, Vuelang provides a highly structured, scalable environment for rapid application development while maintaining the efficiency and low footprint characteristic of Go applications.
 
