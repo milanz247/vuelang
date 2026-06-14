@@ -1,0 +1,32 @@
+root    = "."
+tmp_dir = "tmp"
+
+[build]
+  # No -tags needed — ENV=development is set by make dev-backend
+  cmd        = "go build -o ./tmp/cloud_erp_dev ."
+  entrypoint = "./tmp/cloud_erp_dev"
+
+  # Rebuild when these change
+  include_ext = ["go", "toml", "yaml", "yml", "env"]
+
+  # Never watch these (ui rebuilds are Vite's job)
+  exclude_dir  = ["tmp", "dist", "ui/node_modules", "ui/dist", "vendor", ".git"]
+  exclude_file = []
+
+  delay      = 500       # ms debounce before rebuild
+  kill_delay = "200ms"   # wait before killing old process
+  rerun      = false
+  log        = "build-errors.log"
+
+[log]
+  time = true
+
+[color]
+  main    = "magenta"
+  watcher = "cyan"
+  build   = "yellow"
+  runner  = "green"
+
+[screen]
+  clear_on_rebuild = true
+  keep_scroll      = true

@@ -1,0 +1,24 @@
+# Go build outputs
+dist/
+tmp/
+build-errors.log
+
+# Frontend build output (placeholder index.html is tracked)
+ui/dist/assets/
+ui/dist/*.js
+ui/dist/*.css
+
+# Dependencies
+ui/node_modules/
+
+# Environment — NEVER commit real secrets
+.env
+
+# Editor
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# OS
+.DS_Store
