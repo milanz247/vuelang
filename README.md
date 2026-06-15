@@ -535,43 +535,6 @@
 
   ---
 
-  ## Roadmap
-
-  ### V2 → V3 (Next Major Release)
-
-  **Core Framework**
-  - Email system — SMTP mailer with templates and queue integration
-  - `sqlc` integration — type-safe SQL → Go code generation
-  - Event system — `event.Dispatch(UserRegistered{})` with in-process listeners
-  - Redis-backed job queue with retry, delay, and priority
-  - File storage abstraction (local / S3 / R2)
-  - WebSocket support for real-time events
-  - Redis caching layer with TTL helpers
-  - Task scheduler — cron-like `schedule.Daily(fn)` with distributed lock
-
-  **Developer Experience**
-  - `vuelang new <project>` — scaffold a complete new project
-  - `vuelang make:resource Product` — generate model + migration + controller + service + repo at once
-  - `vuelang migrate:rollback` — reversible migrations
-  - `vuelang migrate:status` — show which migrations have run
-  - OpenAPI / Swagger auto-generation from route definitions
-
-  **Security Additions**
-  - MFA (TOTP — Google Authenticator compatible)
-  - Email verification gate on registration
-  - Account lockout after N failed login attempts
-  - API key support (`X-API-Key` header)
-
-  **Frontend**
-  - Form validation with vee-validate + zod schema mirroring
-  - Toast notification system
-  - Admin panel for user management
-  - Dark mode with persisted preference
-
-  See [ROADMAP.md](ROADMAP.md) for the full plan including V3 → V4 features.
-
-  ---
-
   ## License
 
   MIT — see [LICENSE](LICENSE) for details.
