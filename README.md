@@ -1,129 +1,196 @@
-<div align="center">
-  <img src="ui/public/vuelang-logo.svg" alt="Vuelang Logo" width="120" height="120" />
-  <h1>Vuelang Framework</h1>
-  <p><strong>Author</strong>: Milan Madusanka, Associate TechOps Engineer</p>
-</div>
+# Vuelang V2
 
-<br />
+> **Enterprise-grade Go + Vue 3 full-stack framework**  
+> Single binary. JWT auth. RBAC. Production secure.
 
-Vuelang is an enterprise-grade, full-stack MVC web framework. It bridges the performance of a Go backend with the reactivity of a Vue 3 frontend. Inspired by proven MVC architectural patterns, Vuelang provides a highly structured, scalable environment for rapid application development while maintaining the efficiency and low footprint characteristic of Go applications.
-
-## System Architecture
-
-Vuelang separates concerns into distinct layers, ensuring that business logic, routing, and data access remain decoupled. The Vue 3 frontend operates as a Single Page Application (SPA) communicating asynchronously with the Go API.
-
-```mermaid
-graph TD
-    subgraph Frontend
-        Vue[Vue 3 SPA]
-        Vite[Vite Bundler]
-        Tailwind[Tailwind CSS + Shadcn]
-        Vue --- Vite
-        Vue --- Tailwind
-    end
-
-    subgraph Backend [Go Backend via Gin]
-        Router[API Router]
-        Middleware[HTTP Middleware]
-        Controllers[Controllers]
-        Models[Data Models]
-        
-        Router --> Middleware
-        Middleware --> Controllers
-        Controllers <--> Models
-    end
-
-    Database[(MySQL Database)]
-
-    Vue <-->|JSON over HTTP| Router
-    Models <-->|SQL Queries| Database
+```
+  ┌────────────────────────────────────────────────────────┐
+  │  Backend  →  Go 1.23 + Gin                            │
+  │  Frontend →  Vue 3 + Vite + Tailwind + ShadcnVue      │
+  │  Database →  MySQL 8.0                                 │
+  │  Auth     →  JWT (access + refresh) + RBAC            │
+  │  Deploy   →  Single binary or Docker                   │
+  └────────────────────────────────────────────────────────┘
 ```
 
-## Core Features
+---
 
-- **MVC Architecture**: Codebase is logically divided into `app/controllers`, `app/models`, and `app/middleware`.
-- **Centralized Routing**: API endpoints are registered in a single `routes/api.go` file for maximum visibility and ease of management.
-- **Embedded Production Builds**: The frontend compilation is embedded directly into the Go binary. A single executable runs the entire stack.
-- **Hot-Reloading**: Utilizes `Air` for the Go backend and `Vite HMR` for the frontend, running concurrently during development.
-- **Modern UI Stack**: The frontend is pre-configured with Vue 3, Tailwind CSS, and Shadcn Vue components.
-
-## Directory Structure
-
-```text
-vuelang/
-├── app/                  
-│   ├── controllers/      # Route handlers implementing business logic
-│   ├── middleware/       # HTTP request interceptors (e.g., authentication)
-│   └── models/           # Database entities and data access layer
-├── database/             # Schema definitions and migration scripts
-├── internal/             # Core system initialization (config, database, server)
-├── routes/               # API endpoint registries
-├── ui/                   # Vue 3 frontend source code
-├── main.go               # Application entry point
-├── Makefile              # Automation commands
-└── .env.example          # Environment variable template
-```
-
-## Setup and Installation
-
-### System Requirements
-
-- Go (v1.25.0 or higher)
-- Node.js and npm
-- MySQL Database
-
-### Installation Instructions
-
-1. **Clone the Repository**
-   Navigate to your desired workspace and clone the repository.
-   ```bash
-   git clone https://github.com/milanz247/vuelang.git
-   cd vuelang
-   ```
-
-2. **Environment Configuration**
-   Duplicate the environment template and configure your database credentials.
-   ```bash
-   cp .env.example .env
-   ```
-
-3. **Install Dependencies**
-   The provided Makefile automates the installation of Go modules, Node dependencies, and development tools.
-   ```bash
-   make install
-   ```
-
-## Development Workflow
-
-To start the local development environment with concurrent hot-reloading for both the frontend and backend:
+## Quick Start
 
 ```bash
+# 1. Clone & install
+git clone https://github.com/your-org/vuelang.git
+cd vuelang
+cp .env.example .env   # fill in DB credentials + JWT_SECRET
+
+# 2. Install tools
+make install           # installs Air, npm deps, CLI
+
+# 3. Start dev server (hot reload for both Go and Vue)
 make dev
+#   → http://localhost:8080
 ```
 
-- The Go API will be available at `http://localhost:8080`.
-- The Vue UI is proxied to Vite and accessible via `http://localhost:8080`.
-
-## Production Deployment
-
-To compile the application for a production environment:
+## Production Build
 
 ```bash
-make build
+make build             # builds Vue → embeds into single Go binary
+make run               # starts production binary on :8080
 ```
 
-This command builds the optimized Vue frontend, injects it into the Go application, and compiles a single binary output located at `dist/vuelang`.
-
-To run the production binary:
+## Docker
 
 ```bash
-make run
+docker-compose up -d   # starts app + MySQL
 ```
 
-## Adding New Resources
+---
 
-The MVC pattern makes adding new endpoints highly predictable:
+## CLI
 
-1. Create a data model in `app/models/`.
-2. Implement the business logic in `app/controllers/`.
-3. Map the HTTP routes to the controller in `routes/api.go`.
+```bash
+vuelang make:model       Product
+vuelang make:controller  ProductController
+vuelang make:middleware  AdminOnly
+vuelang make:migration   create_products_table
+vuelang make:seeder      ProductSeeder
+vuelang version
+```
+
+---
+
+## Adding a New Resource (5 Steps)
+
+```bash
+# 1. Scaffold
+vuelang make:model       Product
+vuelang make:controller  ProductController
+vuelang make:migration   create_products_table
+
+# 2. Edit database/migrations/YYYYMMDDHHMMSS_create_products_table.go
+#    Add your CREATE TABLE statement
+
+# 3. Register migration in database/migrations/runner.go
+
+# 4. Create app/repositories/product_repository.go
+#    Implement DB queries
+
+# 5. Wire in internal/server/router.go
+productCtrl := controllers.NewProductController(productSvc)
+protected.GET("/products", productCtrl.Index)
+```
+
+---
+
+## API Endpoints
+
+### Public
+```
+POST /api/v1/auth/register         Register new account
+POST /api/v1/auth/login            Get access + refresh tokens
+POST /api/v1/auth/refresh          Rotate tokens
+POST /api/v1/auth/forgot-password  Request reset email
+POST /api/v1/auth/reset-password   Set new password
+
+GET  /health                       Health check
+```
+
+### Protected (requires `Authorization: Bearer <access_token>`)
+```
+GET  /api/v1/auth/me               Current user + roles
+POST /api/v1/auth/logout           Invalidate refresh token
+
+# Admin only
+GET    /api/v1/users               List users
+GET    /api/v1/users/:id           Get user
+POST   /api/v1/users               Create user
+PUT    /api/v1/users/:id           Update user
+DELETE /api/v1/users/:id           Delete user
+```
+
+### Response Format
+```json
+{
+  "success": true,
+  "message": "User created",
+  "data": { ... },
+  "errors": null,
+  "meta": { "total": 100, "page": 1, "per_page": 15 }
+}
+```
+
+---
+
+## Environment Variables
+
+| Variable | Default | Description |
+|----------|---------|-------------|
+| `PORT` | `8080` | HTTP listen port |
+| `ENV` | `development` | `development` or `production` |
+| `JWT_SECRET` | *(required in prod)* | `openssl rand -base64 64` |
+| `JWT_ACCESS_TTL_MINUTES` | `15` | Access token lifetime |
+| `JWT_REFRESH_TTL_DAYS` | `7` | Refresh token lifetime |
+| `DB_HOST` | `127.0.0.1` | MySQL host |
+| `DB_NAME` | `vuelang` | Database name |
+| `CORS_ALLOWED_ORIGINS` | `http://localhost:5173` | Comma-separated origins |
+| `DB_SEED` | `false` | Set `true` to seed dev data |
+
+---
+
+## Project Structure
+
+```
+app/controllers/    HTTP handlers
+app/middleware/     Auth, RBAC, rate limiting
+app/models/         Data structs (no SQL)
+app/repositories/   SQL queries (data access layer)
+app/requests/       Validated request DTOs
+app/services/       Business logic
+
+bootstrap/app.go    Dependency injection wiring
+config/app.go       Typed configuration
+
+database/migrations/  Schema migration files
+database/seeders/     Dev data seeders
+
+internal/framework/   JWT, hash, response, rate limit
+internal/platform/    DB connection, logger
+internal/server/      Gin setup + route registration
+
+cmd/vuelang/        CLI scaffolding tool
+ui/                 Vue 3 frontend
+```
+
+---
+
+## Security
+
+See [SECURITY_CHECKLIST.md](SECURITY_CHECKLIST.md) before every production deployment.  
+See [AUDIT_REPORT.md](AUDIT_REPORT.md) for the full security audit findings.
+
+**Key security features:**
+- JWT with 15-minute access tokens + 7-day rotating refresh tokens
+- bcrypt cost 12 password hashing
+- IP-based rate limiting (5 req/min on auth endpoints)
+- CORS with explicit origin allowlist
+- Full security header suite (CSP, X-Frame-Options, etc.)
+- RBAC with DB-backed roles
+- Audit log schema ready
+
+---
+
+## Seeded Accounts (development only)
+
+When `DB_SEED=true`:
+
+| Email | Password | Role |
+|-------|----------|------|
+| superadmin@vuelang.dev | password123 | super_admin |
+| admin@vuelang.dev | password123 | admin |
+| demo@vuelang.dev | password123 | user |
+
+---
+
+## License
+
+MIT

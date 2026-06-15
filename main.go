@@ -1,50 +1,48 @@
 package main
 
 import (
+	"context"
 	"log"
 	"os"
+	"os/signal"
+	"syscall"
+	"time"
 
-	"go-cloud-erp/database/migrations"
-	"go-cloud-erp/internal/config"
-	"go-cloud-erp/internal/platform/database"
-	"go-cloud-erp/internal/platform/logger"
-	"go-cloud-erp/internal/server"
+	"vuelang/bootstrap"
+	"vuelang/internal/platform/logger"
 
 	_ "github.com/go-sql-driver/mysql"
+	"github.com/joho/godotenv"
 )
 
 func main() {
-	cfg := config.Load()
-	logger.Init(cfg.Env)
+	// Load .env file; silently ignored in production where real env vars are set.
+	_ = godotenv.Load()
 
-	// ── Database ──────────────────────────────────────────────────────────────
-	db, err := database.NewMySQLConnection(cfg)
-	if err != nil {
-		logger.Log.Warn("MySQL unavailable, running without database: " + err.Error())
-	} else {
-		defer db.Close()
-		logger.Log.Info("MySQL connected")
+	app := bootstrap.New()
+	defer app.Close()
 
-		if err := migrations.Run(db); err != nil {
-			logger.Log.Error("migration failed: " + err.Error())
-			os.Exit(1)
+	srv := app.HTTPServer(embeddedUI)
+
+	ctx, stop := signal.NotifyContext(context.Background(), os.Interrupt, syscall.SIGTERM)
+	defer stop()
+
+	go func() {
+		if err := srv.ListenAndServe(); err != nil {
+			log.Printf("server stopped: %v", err)
 		}
+	}()
+
+	logger.Log.Info("✦ Vuelang V2 — press Ctrl+C to stop")
+	<-ctx.Done()
+
+	logger.Log.Info("shutdown signal received, draining connections…")
+	shutdownCtx, cancel := context.WithTimeout(context.Background(), 15*time.Second)
+	defer cancel()
+
+	if err := srv.Shutdown(shutdownCtx); err != nil {
+		logger.Log.Error("graceful shutdown error: " + err.Error())
+		os.Exit(1)
 	}
-
-	// ── HTTP Server ───────────────────────────────────────────────────────────
-	//
-	//   make dev    →  ENV=development  →  proxies /* to Vite :5173
-	//   make build  →  ENV=production   →  serves embedded ui/dist
-	//
-	srv := server.NewServer(cfg, db)
-
-	if cfg.Env == "production" {
-		if err := srv.Start(embeddedUI); err != nil {
-			log.Fatalf("server: %v", err)
-		}
-	} else {
-		if err := srv.StartDev("http://localhost:5173"); err != nil {
-			log.Fatalf("dev server: %v", err)
-		}
-	}
+	logger.Log.Info("server stopped cleanly")
 }

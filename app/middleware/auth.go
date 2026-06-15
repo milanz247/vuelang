@@ -1,27 +1,49 @@
 package middleware
 
 import (
-	"net/http"
 	"strings"
 
 	"github.com/gin-gonic/gin"
+
+	jwtpkg "vuelang/internal/framework/jwt"
+	"vuelang/internal/framework/response"
 )
 
-// Auth is a JWT Bearer token guard.
-// Replace the stub with real JWT validation (e.g. golang-jwt/jwt).
-func Auth() gin.HandlerFunc {
+// AuthMiddleware validates JWT Bearer tokens and injects user context.
+type AuthMiddleware struct {
+	jwt jwtpkg.Service
+}
+
+func NewAuth(jwt jwtpkg.Service) *AuthMiddleware {
+	return &AuthMiddleware{jwt: jwt}
+}
+
+// Handle returns the Gin middleware function.
+func (m *AuthMiddleware) Handle() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		header := c.GetHeader("Authorization")
 		if header == "" || !strings.HasPrefix(header, "Bearer ") {
-			c.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{
-				"error": "missing or invalid Authorization header",
-			})
+			response.Unauthorized(c)
+			c.Abort()
 			return
 		}
-		// TODO: parse & verify the token, then set user context:
-		// token := strings.TrimPrefix(header, "Bearer ")
-		// claims, err := jwt.Verify(token, cfg.JWTSecret)
-		// c.Set("user_id", claims.UserID)
+
+		tokenStr := strings.TrimPrefix(header, "Bearer ")
+		claims, err := m.jwt.ValidateAccess(tokenStr)
+		if err != nil {
+			if err == jwtpkg.ErrTokenExpired {
+				response.Unauthorized(c, "Access token has expired")
+			} else {
+				response.Unauthorized(c, "Invalid access token")
+			}
+			c.Abort()
+			return
+		}
+
+		// Inject verified claims into context
+		c.Set("user_id", claims.UserID)
+		c.Set("user_email", claims.Email)
+		c.Set("user_roles", claims.Roles)
 		c.Next()
 	}
 }
