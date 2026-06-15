@@ -4,17 +4,17 @@ services:
   app:
     build: .
     ports:
-      - "8080:8080"
+      - "9090:9090"
     environment:
       ENV: production
-      PORT: 8080
+      PORT: 9090
       DB_HOST: db
       DB_PORT: 3306
       DB_USER: vuelang
       DB_PASSWORD: ${DB_PASSWORD:-secret}
       DB_NAME: vuelang
       JWT_SECRET: ${JWT_SECRET:?JWT_SECRET must be set}
-      CORS_ALLOWED_ORIGINS: ${CORS_ALLOWED_ORIGINS:-http://localhost:8080}
+      CORS_ALLOWED_ORIGINS: ${CORS_ALLOWED_ORIGINS:-http://localhost:9090}
     depends_on:
       db:
         condition: service_healthy

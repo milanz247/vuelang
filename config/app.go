@@ -53,10 +53,10 @@ type App struct {
 
 func Load() *App {
 	cfg := &App{
-		Port:    getEnv("PORT", "8080"),
+		Port:    getEnv("PORT", "9090"),
 		Env:     getEnv("ENV", "development"),
 		AppName: getEnv("APP_NAME", "Vuelang"),
-		AppURL:  getEnv("APP_URL", "http://localhost:8080"),
+		AppURL:  getEnv("APP_URL", "http://localhost:9090"),
 
 		DBHost:         getEnv("DB_HOST", "127.0.0.1"),
 		DBPort:         getEnv("DB_PORT", "3306"),
@@ -71,7 +71,7 @@ func Load() *App {
 		JWTAccessTTL:     time.Duration(getEnvInt("JWT_ACCESS_TTL_MINUTES", 15)) * time.Minute,
 		JWTRefreshTTLDay: getEnvInt("JWT_REFRESH_TTL_DAYS", 7),
 
-		CORSAllowedOrigins: strings.Split(getEnv("CORS_ALLOWED_ORIGINS", "http://localhost:5173,http://localhost:8080"), ","),
+		CORSAllowedOrigins: strings.Split(getEnv("CORS_ALLOWED_ORIGINS", "http://localhost:5173,http://localhost:9090"), ","),
 
 		RateLimitRequests:    getEnvInt("RATE_LIMIT_REQUESTS", 60),
 		RateLimitWindowSecs:  getEnvInt("RATE_LIMIT_WINDOW_SECONDS", 60),

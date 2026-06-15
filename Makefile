@@ -18,7 +18,7 @@ dev:
 	@echo ""
 	@echo "  ┌──────────────────────────────────────────────────┐"
 	@echo "  │              Vuelang V2  DEV                     │"
-	@echo "  │   App  →  http://localhost:8080                  │"
+	@echo "  │   App  →  http://localhost:9090                  │"
 	@echo "  │   .go  →  Air rebuilds  (<1s)                    │"
 	@echo "  │   .vue →  Vite HMR  (instant)                   │"
 	@echo "  └──────────────────────────────────────────────────┘"

@@ -27,5 +27,5 @@ COPY --from=go-builder /etc/ssl/certs/ca-certificates.crt /etc/ssl/certs/
 COPY --from=go-builder /usr/share/zoneinfo /usr/share/zoneinfo
 COPY --from=go-builder /vuelang /vuelang
 
-EXPOSE 8080
+EXPOSE 9090
 ENTRYPOINT ["/vuelang"]

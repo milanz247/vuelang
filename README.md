@@ -214,13 +214,13 @@ make dev
 ```
   ┌──────────────────────────────────────────────────┐
   │              Vuelang V2  DEV                     │
-  │   App  →  http://localhost:8080                  │
+  │   App  →  http://localhost:9090                  │
   │   .go  →  Air rebuilds  (<1s)                    │
   │   .vue →  Vite HMR  (instant)                   │
   └──────────────────────────────────────────────────┘
 ```
 
-- Go API and Vue frontend are both served at **`http://localhost:8080`**
+- Go API and Vue frontend are both served at **`http://localhost:9090`**
 - Edit any `.go` file → Air detects the change and rebuilds in under 1 second
 - Edit any `.vue` file → Vite HMR updates the browser instantly with no full reload
 
@@ -356,7 +356,7 @@ Copy `.env.example` to `.env` and configure the following:
 
 | Variable | Default | Required | Description |
 |----------|---------|----------|-------------|
-| `PORT` | `8080` | No | HTTP listen port |
+| `PORT` | `9090` | No | HTTP listen port |
 | `ENV` | `development` | No | `development` or `production` |
 | `JWT_SECRET` | — | **Yes (prod)** | Min 32 chars — generate with `openssl rand -base64 64` |
 | `JWT_ACCESS_TTL_MINUTES` | `15` | No | Access token lifetime in minutes |
