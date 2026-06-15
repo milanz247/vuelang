@@ -1,6 +1,6 @@
 <div align="center">
 
-<img src="https://raw.githubusercontent.com/milanz247/vuelang/main/ui/public/vuelang-logo.svg" alt="Vuelang Logo" width="120" height="120" />
+<img src="https://raw.githubusercontent.com/milanz247/vuelang/main/ui/src/assets/vuelang-logo.svg" alt="Vuelang Logo" width="120" height="120" />
 
 # Vuelang Framework
 
