@@ -8,8 +8,8 @@
 
 @layer base {
   :root {
-    --primary: 79 70 229; 
-    --primary-foreground: 255 255 255;
+    --primary: 0 0% 9%;
+    --primary-fg: 255 255 255;
     --muted: 0 0% 96.1%;
     --muted-fg: 107 114 128;
     --border: 0 0% 89.8%;
