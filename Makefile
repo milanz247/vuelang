@@ -9,6 +9,8 @@ install:
 	go install github.com/air-verse/air@latest
 	@echo "→ Installing frontend dependencies…"
 	cd ui && npm install
+	@echo "→ Creating dummy ui/dist placeholder for Go embed…"
+	mkdir -p ui/dist && echo "placeholder" > ui/dist/index.html
 	@echo "→ Installing CLI…"
 	go install ./cmd/vuelang
 	@echo "✓ Done. Run 'make dev' to start."
