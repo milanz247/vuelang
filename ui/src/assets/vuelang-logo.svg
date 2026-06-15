@@ -1,0 +1,41 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="100%" height="100%">
+  <defs>
+    <!-- Left side: Vue Green Gradient -->
+    <linearGradient id="vue-green" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#41B883" />
+      <stop offset="100%" stop-color="#35495E" />
+    </linearGradient>
+    
+    <!-- Right side: Go Blue Gradient -->
+    <linearGradient id="go-blue" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#00ADD8" />
+      <stop offset="100%" stop-color="#007A99" />
+    </linearGradient>
+
+    <!-- Drop Shadow for depth -->
+    <filter id="shadow" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="0" dy="12" stdDeviation="15" flood-color="#000" flood-opacity="0.25"/>
+    </filter>
+
+    <!-- Mask to create Go "speed lines" on the right wing -->
+    <mask id="go-speed-lines">
+      <rect width="512" height="512" fill="white" />
+      <!-- Three horizontal cuts mimicking the Go logo -->
+      <!-- The cut lengths are staggered to give a sense of motion -->
+      <path d="M 330 180 L 512 180 L 512 215 L 305 215 Z" fill="black" />
+      <path d="M 370 260 L 512 260 L 512 295 L 345 295 Z" fill="black" />
+      <path d="M 410 340 L 512 340 L 512 375 L 385 375 Z" fill="black" />
+    </mask>
+  </defs>
+
+  <!-- Go Blue Right Wing (With Speed Lines Cutout) -->
+  <path d="M 256 460 L 480 120 L 370 120 L 256 295 Z" fill="url(#go-blue)" filter="url(#shadow)" mask="url(#go-speed-lines)" />
+  
+  <!-- Vue Green Left Wing -->
+  <path d="M 256 460 L 32 120 L 142 120 L 256 295 Z" fill="url(#vue-green)" filter="url(#shadow)" />
+
+  <!-- Inner Dark Triangle (Vue's signature inner shape) -->
+  <path d="M 142 120 L 256 295 L 370 120 L 310 120 L 256 200 L 202 120 Z" fill="#35495E" />
+
+  <!-- Top Accent (The classic Vue white center cutout is formed naturally by the gap between inner components) -->
+</svg>
